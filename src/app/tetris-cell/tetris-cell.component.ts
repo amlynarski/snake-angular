@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TetrisPositionService } from '../services/tetris-position.service';
+import { TetrisPositionService } from '../services/tetris-position/tetris-position.service';
 
 @Component({
   selector: 'app-tetris-cell',

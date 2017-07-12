@@ -4,7 +4,8 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { TetrisMatrixComponent } from './tetris-matrix/tetris-matrix.component';
 import { TetrisCellComponent } from './tetris-cell/tetris-cell.component';
-import { TetrisPositionService } from './services/tetris-position.service';
+import { TetrisPositionService } from './services/tetris-position/tetris-position.service';
+import { TetrisSnakeService } from './services/tetris-snake/tetris-snake.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,7 @@ import { TetrisPositionService } from './services/tetris-position.service';
   imports: [
     BrowserModule
   ],
-  providers: [TetrisPositionService],
+  providers: [TetrisPositionService, TetrisSnakeService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
