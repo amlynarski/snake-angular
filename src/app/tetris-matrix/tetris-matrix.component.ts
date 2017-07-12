@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { TetrisCellComponent } from '../tetris-cell/tetris-cell.component';
+import { TetrisPositionService } from '../services/tetris-position.service';
 
 @Component({
   selector: 'app-tetris-matrix',
@@ -6,10 +8,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tetris-matrix.component.sass']
 })
 export class TetrisMatrixComponent implements OnInit {
-  numberOfCells = 200;
-  cells: Array<any>;
+  numberOfCells: number;
+  cells: Array<TetrisCellComponent>;
 
-  constructor() {
+  constructor(private tetrisPositionService: TetrisPositionService) {
+    this.numberOfCells = tetrisPositionService.getNumberOfRows() * tetrisPositionService.getNumberOfColumns();
     this.cells = Array(this.numberOfCells).fill(1);
   }
 
