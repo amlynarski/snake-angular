@@ -41,6 +41,12 @@ export class TetrisMatrixComponent implements OnInit {
   }
 
   ngOnInit() {
+    const subscription = this.snake.onMove()
+      .subscribe(
+        (x) => { console.log(x.map((y) => y.index))},
+        () => { console.log('error')},
+        () => { console.log('completed')}
+      )
   }
 
 }

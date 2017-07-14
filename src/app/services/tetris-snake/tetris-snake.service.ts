@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 enum Direction {
   up,
@@ -16,10 +18,11 @@ interface ISnakeBody {
 export class TetrisSnakeService {
   direction: Direction = Direction.right;
   intervalTime: number;
-  snakeElements: ISnakeBody[];
+  snakeElements: Subject<Array<ISnakeBody>>;
 
   constructor() {
     this.intervalTime = 500;
+    this.snakeElements = new Subject();
     this.startSnake();
   }
 
@@ -39,6 +42,10 @@ export class TetrisSnakeService {
     this.direction = Direction.right;
   }
 
+  onMove() {
+    return this.snakeElements;
+  }
+
   private startSnake() {
     setInterval(
       () => this.move(),
@@ -47,8 +54,12 @@ export class TetrisSnakeService {
   }
 
   private move() {
-    console.log('MOVE: ', this.direction);
-    // todo use observable and subscribe to method to update position of snake in matrix component (it would be a stream)
+    this.snakeElements.next(
+      [{
+        index: this.direction,
+        isHead: true
+      }]
+    )
   }
 
 }
