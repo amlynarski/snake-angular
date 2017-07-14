@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { TetrisPositionService } from '../tetris-position/tetris-position.service';
 
@@ -18,6 +17,7 @@ export interface ISnakeBody {
 @Injectable()
 export class TetrisSnakeService {
   direction: Direction = Direction.left;
+  nextDirection: Direction = Direction.left;
   intervalTime: number;
   snakeArr: Array<ISnakeBody>;
   snakeElements: Subject<Array<ISnakeBody>>;
@@ -35,25 +35,25 @@ export class TetrisSnakeService {
 
   onKeyUp() {
     if (this.direction !== Direction.down) {
-      this.direction = Direction.up;
+      this.nextDirection = Direction.up;
     }
   }
 
   onKeyDown() {
     if (this.direction !== Direction.up) {
-      this.direction = Direction.down;
+      this.nextDirection = Direction.down;
     }
   }
 
   onKeyLeft() {
     if (this.direction !== Direction.right) {
-      this.direction = Direction.left;
+      this.nextDirection = Direction.left;
     }
   }
 
   onKeyRight() {
     if (this.direction !== Direction.left) {
-      this.direction = Direction.right;
+      this.nextDirection = Direction.right;
     }
   }
 
@@ -90,8 +90,8 @@ export class TetrisSnakeService {
   }
 
   private move() {
-
-    switch (this.direction) {
+    this.direction = this.nextDirection;
+    switch (this.nextDirection) {
       case Direction.up:
         this.snakeUp();
         break;
