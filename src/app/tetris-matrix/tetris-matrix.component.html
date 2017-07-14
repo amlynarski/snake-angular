@@ -1,6 +1,7 @@
 <div class="tetris-matrix">
   <app-tetris-cell
     *ngFor="let item of cells; let i = index"
+    [color]="item.color"
     [index]="i"
     class="tetris-cell-area">
   </app-tetris-cell>

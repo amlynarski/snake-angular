@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { TetrisCellComponent } from '../tetris-cell/tetris-cell.component';
 import { TetrisPositionService } from '../services/tetris-position/tetris-position.service';
-import { TetrisSnakeService } from '../services/tetris-snake/tetris-snake.service';
+import { ISnakeBody, TetrisSnakeService } from '../services/tetris-snake/tetris-snake.service';
+import { TetrisCell } from 'app/tetris-cell/tetris-cell.class';
 
 @Component({
   selector: 'app-tetris-matrix',
@@ -10,14 +10,14 @@ import { TetrisSnakeService } from '../services/tetris-snake/tetris-snake.servic
 })
 export class TetrisMatrixComponent implements OnInit {
   numberOfCells: number;
-  cells: Array<TetrisCellComponent>;
+  cells: Array<TetrisCell>;
 
   constructor(
     private tetrisPositionService: TetrisPositionService,
     private snake: TetrisSnakeService
   ) {
     this.numberOfCells = tetrisPositionService.getNumberOfRows() * tetrisPositionService.getNumberOfColumns();
-    this.cells = Array(this.numberOfCells);
+    this.initCells();
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -40,10 +40,36 @@ export class TetrisMatrixComponent implements OnInit {
     }
   }
 
+  initCells() {
+    this.cells = [];
+    for (let i = 0; i < this.numberOfCells ; i++) {
+      this.cells.push(new TetrisCell())
+    }
+  }
+
+  clearCells() {
+    for (let i = 0; i < this.numberOfCells ; i++) {
+      this.cells[i].clear();
+    }
+  }
+
+  updateCellsWithSnakeDirections(snakeBodyArray: ISnakeBody[]) {
+    this.clearCells();
+    snakeBodyArray.forEach(
+      (snakeBodyElement: ISnakeBody) => {
+        const cell = this.cells[snakeBodyElement.index];
+        if (cell) {
+          cell.color =  snakeBodyElement.isHead ? 'red' : 'blue';
+          cell.isEmpty = false;
+        }
+      }
+    )
+  }
+
   ngOnInit() {
     const subscription = this.snake.onMove()
       .subscribe(
-        (x) => { console.log(x.map((y) => y.index))},
+        () => { this.updateCellsWithSnakeDirections(this.snake.getBodyElements()) },
         () => { console.log('error')},
         () => { console.log('completed')}
       )

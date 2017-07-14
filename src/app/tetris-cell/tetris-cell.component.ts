@@ -8,14 +8,12 @@ import { TetrisPositionService } from '../services/tetris-position/tetris-positi
 })
 export class TetrisCellComponent implements OnInit {
   @Input() index: number;
+  @Input() color: string;
 
   rowNumber: number;
   columnNumber: number;
-  isEmpty: boolean;
 
-  constructor(private tetrisPositionService: TetrisPositionService) {
-    this.isEmpty = true;
-  }
+  constructor(private tetrisPositionService: TetrisPositionService) {}
 
   ngOnInit() {
     this.rowNumber = this.tetrisPositionService.calculateRowPosition(this.index);
