@@ -23,7 +23,7 @@ export class TetrisSnakeService {
   snakeElements: Subject<Array<ISnakeBody>>;
 
   constructor(private tetrisPositionService: TetrisPositionService) {
-    this.intervalTime = 500;
+    this.intervalTime = 250;
     this.initSnake();
     this.snakeElements = new Subject();
     this.startSnake();
