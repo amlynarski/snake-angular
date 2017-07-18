@@ -116,46 +116,42 @@ export class TetrisSnakeService {
     const snakeHeadIndex = this.snakeArr[0].index;
 
     if (!this.isNextMoveWall(snakeHeadIndex, this.nextDirection)) {
+      let offset;
       switch (this.nextDirection) {
         case Direction.up:
-          this.snakeUp(Direction.up);
+          offset = -this.tetrisPositionService.getNumberOfColumns();
+          this.calculateSnakePosition(offset);
           break;
         case Direction.down:
-          this.snakeDown(Direction.down);
+          offset = this.tetrisPositionService.getNumberOfColumns();
+          this.calculateSnakePosition(offset);
           break;
         case Direction.right:
-          this.snakeRight(Direction.right);
+          offset = 1;
+          this.calculateSnakePosition(offset);
           break;
         case Direction.left:
-          this.snakeLeft(Direction.left);
+          offset = -1;
+          this.calculateSnakePosition(offset);
           break;
       }
 
-      this.snakeElements.next(
-        this.snakeArr
-      );
+      if (!this.isNextMoveSnakeBody(offset)) {
+        this.snakeElements.next(
+          this.snakeArr
+        );
+      } else {
+        this.snakeElements.complete();
+        this.foodElement.complete();
+      }
+
     } else {
       this.snakeElements.complete();
+      this.foodElement.complete();
     }
   }
 
-  private snakeUp(direction: Direction) {
-    this.calculateSnakePosition(-this.tetrisPositionService.getNumberOfColumns(), direction);
-  }
-
-  private snakeDown(direction: Direction) {
-    this.calculateSnakePosition(this.tetrisPositionService.getNumberOfColumns(), direction);
-  }
-
-  private snakeRight(direction: Direction) {
-    this.calculateSnakePosition(1, direction);
-  }
-
-  private snakeLeft(direction: Direction) {
-    this.calculateSnakePosition(-1, direction);
-  }
-
-  private calculateSnakePosition(offset: number, direction: Direction) {
+  private calculateSnakePosition(offset: number) {
     let currentSnakeArr = this.snakeArr;
 
     if (this.snakeArr[0].index + offset !== this.foodElementIndex) {
@@ -185,6 +181,12 @@ export class TetrisSnakeService {
       case Direction.left:
         return this.tetrisPositionService.isFirstColumn(snakeHeadIndex);
     }
+  }
+
+  private isNextMoveSnakeBody(offset) {
+    const headIndex = this.snakeArr[0].index;
+    const tailIndex = this.snakeArr.slice(-1)[0].index;
+    return this.snakeArr.find( ({index}) => headIndex + offset === index ) && (headIndex + offset !== tailIndex)
   }
 
   private updateFoodElement(index: number) {

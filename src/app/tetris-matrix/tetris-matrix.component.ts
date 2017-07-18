@@ -81,7 +81,7 @@ export class TetrisMatrixComponent implements OnInit {
   }
 
   ngOnInit() {
-    const subscription = this.snake.onMove()
+    const snakeSubscription = this.snake.onMove()
       .subscribe(
         () => { this.updateCellsWithSnakeDirections(this.snake.getBodyElements()) },
         () => { console.log('error')},
@@ -90,7 +90,7 @@ export class TetrisMatrixComponent implements OnInit {
 
     const updateFoodElementSubscription = this.snake.onUpdateFoodElement()
       .subscribe(
-        (x) => { this.updateCellIndex(x) },
+        (foodIndex) => { this.updateCellIndex(foodIndex) },
         () => { console.log('error')},
         () => { console.log('completed')}
       );
