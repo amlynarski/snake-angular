@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { TetrisPositionService } from '../services/tetris-position/tetris-position.service';
-import { ISnakeBody, TetrisSnakeService } from '../services/tetris-snake/tetris-snake.service';
+import { FOOD_CELL_COLOR, ISnakeBody, SNAKE_BODY_COLOR, TetrisSnakeService } from '../services/tetris-snake/tetris-snake.service';
 import { TetrisCell } from 'app/tetris-cell/tetris-cell.class';
 
 @Component({
@@ -11,6 +11,7 @@ import { TetrisCell } from 'app/tetris-cell/tetris-cell.class';
 export class TetrisMatrixComponent implements OnInit {
   numberOfCells: number;
   cells: Array<TetrisCell>;
+  foodCellIndex: number;
 
   constructor(
     private tetrisPositionService: TetrisPositionService,
@@ -55,15 +56,28 @@ export class TetrisMatrixComponent implements OnInit {
 
   updateCellsWithSnakeDirections(snakeBodyArray: ISnakeBody[]) {
     this.clearCells();
+    this.updateCellsWithFood();
     snakeBodyArray.forEach(
       (snakeBodyElement: ISnakeBody) => {
         const cell = this.cells[snakeBodyElement.index];
         if (cell) {
-          cell.color =  snakeBodyElement.isHead ? 'red' : 'blue';
+          cell.color =  snakeBodyElement.isHead ? FOOD_CELL_COLOR : SNAKE_BODY_COLOR;
           cell.isEmpty = false;
         }
       }
     )
+  }
+
+  updateCellsWithFood() {
+    const cell = this.cells[this.foodCellIndex];
+    if (cell) {
+      cell.color = FOOD_CELL_COLOR;
+      cell.isEmpty = false;
+    }
+  }
+
+  updateCellIndex(index: number) {
+    this.foodCellIndex = index;
   }
 
   ngOnInit() {
@@ -72,7 +86,16 @@ export class TetrisMatrixComponent implements OnInit {
         () => { this.updateCellsWithSnakeDirections(this.snake.getBodyElements()) },
         () => { console.log('error')},
         () => { console.log('completed')}
-      )
+      );
+
+    const updateFoodElementSubscription = this.snake.onUpdateFoodElement()
+      .subscribe(
+        (x) => { this.updateCellIndex(x) },
+        () => { console.log('error')},
+        () => { console.log('completed')}
+      );
+
+    this.snake.generateFood();
   }
 
 }

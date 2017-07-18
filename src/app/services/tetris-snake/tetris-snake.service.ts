@@ -14,6 +14,10 @@ export interface ISnakeBody {
   isHead: boolean;
 }
 
+export const FOOD_CELL_COLOR = 'red';
+export const EMPTY_CELL_COLOR = 'white';
+export const SNAKE_BODY_COLOR = 'blue';
+
 @Injectable()
 export class TetrisSnakeService {
   direction: Direction = Direction.left;
@@ -21,11 +25,15 @@ export class TetrisSnakeService {
   intervalTime: number;
   snakeArr: Array<ISnakeBody>;
   snakeElements: Subject<Array<ISnakeBody>>;
+  numberOfCellsInMatrix: number;
+  foodElementIndex: Subject<number>;
 
   constructor(private tetrisPositionService: TetrisPositionService) {
     this.intervalTime = 250;
+    this.numberOfCellsInMatrix = tetrisPositionService.getNumberOfColumns() * tetrisPositionService.getNumberOfRows();
     this.initSnake();
     this.snakeElements = new Subject();
+    this.foodElementIndex = new Subject();
     this.startSnake();
 
     const snakeBody = this.snakeElements.subscribe( // todo unsubscribe
@@ -61,8 +69,25 @@ export class TetrisSnakeService {
     return this.snakeElements;
   }
 
+  onUpdateFoodElement() {
+    return this.foodElementIndex;
+  }
+
   getBodyElements() {
     return this.snakeArr;
+  }
+
+  generateFood() {
+    let foodElementIndex;
+
+    while (true) {
+      foodElementIndex = Math.floor(Math.random() * this.numberOfCellsInMatrix);
+      if (this.snakeArr.find(({index}) => index !== foodElementIndex)){
+        break;
+      }
+    }
+
+    this.updateFoodElement(foodElementIndex);
   }
 
   private initSnake() {
@@ -155,6 +180,11 @@ export class TetrisSnakeService {
       ...this.snakeArr.slice(0, -1)
     ];
     this.snakeArr[1].isHead = false;
+  }
+
+  private updateFoodElement(index: number) {
+    console.log('next food generated', index);
+    this.foodElementIndex.next(index);
   }
 
 }
