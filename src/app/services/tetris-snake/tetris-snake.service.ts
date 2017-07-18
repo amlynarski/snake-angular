@@ -20,8 +20,8 @@ export const SNAKE_BODY_COLOR = 'blue';
 
 @Injectable()
 export class TetrisSnakeService {
-  direction: Direction = Direction.left;
-  nextDirection: Direction = Direction.left;
+  direction: Direction = Direction.right;
+  nextDirection: Direction = Direction.right;
   intervalTime: number;
   snakeArr: Array<ISnakeBody>;
   snakeElements: Subject<Array<ISnakeBody>>;
@@ -30,16 +30,12 @@ export class TetrisSnakeService {
   foodElementIndex: number;
 
   constructor(private tetrisPositionService: TetrisPositionService) {
-    this.intervalTime = 130;
+    this.intervalTime = 150;
     this.numberOfCellsInMatrix = tetrisPositionService.getNumberOfColumns() * tetrisPositionService.getNumberOfRows();
     this.initSnake();
     this.snakeElements = new Subject();
     this.foodElement = new Subject();
     this.startSnake();
-
-    const snakeBody = this.snakeElements.subscribe( // todo unsubscribe
-      (x) => { this.snakeArr = x.map( (item: ISnakeBody) => item ) }
-    );
   }
 
   onKeyUp() {
@@ -95,15 +91,15 @@ export class TetrisSnakeService {
     this.snakeArr = [
       {
         isHead: true,
-        index: 34
+        index: 1
       },
       {
         isHead: false,
-        index: 35
+        index: 2
       },
       {
         isHead: false,
-        index: 36
+        index: 3
       }
     ];
   }
@@ -112,29 +108,35 @@ export class TetrisSnakeService {
     setInterval(
       () => this.move(),
       this.intervalTime
-    )
+    );
   }
 
   private move() {
     this.direction = this.nextDirection;
-    switch (this.nextDirection) {
-      case Direction.up:
-        this.snakeUp(Direction.up);
-        break;
-      case Direction.down:
-        this.snakeDown(Direction.down);
-        break;
-      case Direction.right:
-        this.snakeRight(Direction.right);
-        break;
-      case Direction.left:
-        this.snakeLeft(Direction.left);
-        break;
-    }
+    const snakeHeadIndex = this.snakeArr[0].index;
 
-    this.snakeElements.next(
-      this.snakeArr
-    )
+    if (!this.isNextMoveWall(snakeHeadIndex, this.nextDirection)) {
+      switch (this.nextDirection) {
+        case Direction.up:
+          this.snakeUp(Direction.up);
+          break;
+        case Direction.down:
+          this.snakeDown(Direction.down);
+          break;
+        case Direction.right:
+          this.snakeRight(Direction.right);
+          break;
+        case Direction.left:
+          this.snakeLeft(Direction.left);
+          break;
+      }
+
+      this.snakeElements.next(
+        this.snakeArr
+      );
+    } else {
+      this.snakeElements.complete();
+    }
   }
 
   private snakeUp(direction: Direction) {
@@ -154,24 +156,22 @@ export class TetrisSnakeService {
   }
 
   private calculateSnakePosition(offset: number, direction: Direction) {
-    if (!this.isNextMoveWall(this.snakeArr[0].index, direction)) {
-      let currentSnakeArr = this.snakeArr;
+    let currentSnakeArr = this.snakeArr;
 
-      if (this.snakeArr[0].index + offset !== this.foodElementIndex) {
-        currentSnakeArr = this.snakeArr.slice(0, -1);
-      } else {
-        this.generateFood();
-      }
-
-      this.snakeArr = [
-        {
-          isHead: true,
-          index: this.snakeArr[0].index + offset
-        },
-        ...currentSnakeArr
-      ];
-      this.snakeArr[1].isHead = false;
+    if (this.snakeArr[0].index + offset !== this.foodElementIndex) {
+      currentSnakeArr = this.snakeArr.slice(0, -1);
+    } else {
+      this.generateFood();
     }
+
+    this.snakeArr = [
+      {
+        isHead: true,
+        index: this.snakeArr[0].index + offset
+      },
+      ...currentSnakeArr
+    ];
+    this.snakeArr[1].isHead = false;
   }
 
   private isNextMoveWall(snakeHeadIndex: number, direction: Direction) {
