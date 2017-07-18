@@ -26,14 +26,15 @@ export class TetrisSnakeService {
   snakeArr: Array<ISnakeBody>;
   snakeElements: Subject<Array<ISnakeBody>>;
   numberOfCellsInMatrix: number;
-  foodElementIndex: Subject<number>;
+  foodElement: Subject<number>;
+  foodElementIndex: number;
 
   constructor(private tetrisPositionService: TetrisPositionService) {
-    this.intervalTime = 250;
+    this.intervalTime = 100;
     this.numberOfCellsInMatrix = tetrisPositionService.getNumberOfColumns() * tetrisPositionService.getNumberOfRows();
     this.initSnake();
     this.snakeElements = new Subject();
-    this.foodElementIndex = new Subject();
+    this.foodElement = new Subject();
     this.startSnake();
 
     const snakeBody = this.snakeElements.subscribe( // todo unsubscribe
@@ -70,7 +71,7 @@ export class TetrisSnakeService {
   }
 
   onUpdateFoodElement() {
-    return this.foodElementIndex;
+    return this.foodElement;
   }
 
   getBodyElements() {
@@ -137,54 +138,44 @@ export class TetrisSnakeService {
   }
 
   private snakeUp() {
-    // todo check if there is some food for snake
-    this.snakeArr = [
-      {
-        isHead: true,
-        index: this.snakeArr[0].index - this.tetrisPositionService.getNumberOfColumns()
-      },
-      ...this.snakeArr.slice(0, -1)
-    ];
-    this.snakeArr[1].isHead = false;
+    this.calculateSnakePosition(-this.tetrisPositionService.getNumberOfColumns());
   }
 
   private snakeDown() {
-    this.snakeArr = [
-      {
-        isHead: true,
-        index: this.snakeArr[0].index + this.tetrisPositionService.getNumberOfColumns()
-      },
-      ...this.snakeArr.slice(0, -1)
-    ];
-    this.snakeArr[1].isHead = false;
+    this.calculateSnakePosition(this.tetrisPositionService.getNumberOfColumns());
   }
 
   private snakeRight() {
-    this.snakeArr = [
-      {
-        isHead: true,
-        index: this.snakeArr[0].index + 1
-      },
-      ...this.snakeArr.slice(0, -1)
-    ];
-    this.snakeArr[1].isHead = false;
+    this.calculateSnakePosition(1);
 
   }
 
   private snakeLeft() {
+    this.calculateSnakePosition(-1);
+  }
+
+  private calculateSnakePosition(offset: number) {
+    let currentSnakeArr = this.snakeArr;
+
+    if (this.snakeArr[0].index + offset !== this.foodElementIndex) {
+      currentSnakeArr = this.snakeArr.slice(0, -1);
+    } else {
+      this.generateFood();
+    }
+
     this.snakeArr = [
       {
         isHead: true,
-        index: this.snakeArr[0].index - 1
+        index: this.snakeArr[0].index + offset
       },
-      ...this.snakeArr.slice(0, -1)
+      ...currentSnakeArr
     ];
     this.snakeArr[1].isHead = false;
   }
 
   private updateFoodElement(index: number) {
-    console.log('next food generated', index);
-    this.foodElementIndex.next(index);
+    this.foodElementIndex = index;
+    this.foodElement.next(index);
   }
 
 }
