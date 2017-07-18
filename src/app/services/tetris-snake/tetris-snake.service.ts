@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { TetrisPositionService } from '../tetris-position/tetris-position.service';
 
-enum Direction {
+export enum Direction {
   up,
   down,
   left,
@@ -91,7 +91,7 @@ export class TetrisSnakeService {
     this.snakeArr = [
       {
         isHead: true,
-        index: 1
+        index: 3
       },
       {
         isHead: false,
@@ -99,7 +99,7 @@ export class TetrisSnakeService {
       },
       {
         isHead: false,
-        index: 3
+        index: 1
       }
     ];
   }
