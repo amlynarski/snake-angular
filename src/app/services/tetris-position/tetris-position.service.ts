@@ -23,4 +23,20 @@ export class TetrisPositionService {
     return Math.floor(index / this.numberOfColumns) + 1;
   }
 
+  isFirstRow = (index: number): boolean => {
+    return this.calculateRowPosition(index) === 1;
+  }
+
+  isLastRow = (index: number): boolean => {
+    return this.calculateRowPosition(index) === this.getNumberOfRows();
+  }
+
+  isFirstColumn = (index: number): boolean => {
+    return this.calculateColumnPosition(index) === 1;
+  }
+
+  isLastColumn = (index: number): boolean => {
+    return this.calculateColumnPosition(index) === this.getNumberOfColumns();
+  }
+
 }
