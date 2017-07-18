@@ -49,8 +49,8 @@ export class TetrisMatrixComponent implements OnInit {
   }
 
   clearCells() {
-    for (let i = 0; i < this.numberOfCells ; i++) {
-      this.cells[i].clear();
+    for (const cell of this.cells) {
+      cell.clear();
     }
   }
 
