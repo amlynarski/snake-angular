@@ -1,5 +1,8 @@
-# Tetris
+# Snake
 
+First idea was to create tetris, so you can find here some "tetris" names instead of "snake", but I think it's not a problem. This project was created to understand and create some features from Angular (2+) and as we know - there is no better option to learn sth than coding!! :) 
+
+--original msg from angular cli--
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.0.
 
 ## Development server
