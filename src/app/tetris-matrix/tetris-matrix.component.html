@@ -3,6 +3,7 @@
     *ngFor="let item of cells; let i = index"
     [color]="item.color"
     [index]="i"
+    [isHead]="item.color === 'red'"
     class="tetris-cell-area">
   </app-tetris-cell>
 </div>

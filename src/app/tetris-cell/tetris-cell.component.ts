@@ -9,6 +9,7 @@ import { TetrisPositionService } from '../services/tetris-position/tetris-positi
 export class TetrisCellComponent implements OnInit {
   @Input() index: number;
   @Input() color: string;
+  @Input() isHead = false;
 
   rowNumber: number;
   columnNumber: number;

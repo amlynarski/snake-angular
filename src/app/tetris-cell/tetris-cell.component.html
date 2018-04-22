@@ -1,5 +1,6 @@
 <div class="tetris-cell" [style.background-color]="color">
-  <div class="tetris-cell-body">
-    {{rowNumber}}, {{columnNumber}}
-  </div>
+  <img *ngIf="isHead" src="../../assets/klawiter.png" class="klawiter"/>
+  <!--<div class="tetris-cell-body">-->
+    <!--{{rowNumber}}, {{columnNumber}}-->
+  <!--</div>-->
 </div>

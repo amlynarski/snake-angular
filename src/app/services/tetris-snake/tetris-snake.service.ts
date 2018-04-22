@@ -35,7 +35,7 @@ export class TetrisSnakeService {
     this.initSnake();
     this.snakeElements = new Subject();
     this.foodElement = new Subject();
-    this.startSnake();
+    // this.startSnake();
   }
 
   onKeyUp() {
@@ -60,6 +60,10 @@ export class TetrisSnakeService {
     if (this.direction !== Direction.left) {
       this.nextDirection = Direction.right;
     }
+  }
+
+  start() {
+    this.startSnake();
   }
 
   onMove() {

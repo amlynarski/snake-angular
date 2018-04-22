@@ -36,7 +36,10 @@ export class TetrisMatrixComponent implements OnInit {
       case 'ArrowRight':
         this.snake.onKeyRight();
         break;
+      case 'Enter':
+        this.snake.start();
       default:
+        console.log(ev.code);
         break;
     }
   }
